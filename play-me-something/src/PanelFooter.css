@@ -1,0 +1,12 @@
+.PanelFooter-root {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    height: 60px;
+    padding: 0px 15px;
+}
+
+.PanelFooter-btn {
+    margin-left: 10px;
+}
