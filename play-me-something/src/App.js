@@ -4,7 +4,7 @@ import Header from './Header.js';
 import Body from './Body.js';
 
 export const authEndpoint = 'https://accounts.spotify.com/authorize';
-const clientId = "{{CLIENT_ID}}";
+const clientId = "CLIENT_ID";
 const redirectUri = "http://localhost:3000/";
 const scopes = [
   "user-read-currently-playing",

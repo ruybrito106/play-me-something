@@ -29,6 +29,7 @@ class Panel extends Component {
                 .post(`http://localhost:5000/analyze/accessToken=${this.props.token}`, {text: this.state.text})
                 .then(data => this.setState({track: data.data.track, requestState: requestState.INITIAL}))
                 .catch(err => {
+                    this.setState({requestState: requestState.INITIAL});
                     console.log(err);
                     return null;
                 })
