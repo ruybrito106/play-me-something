@@ -85,3 +85,16 @@ class SongResolver:
         
         pd.DataFrame({'ID': songs.keys()}).to_csv('data/songs.csv')
 
+class SongFeaturesResolver:
+    def __init__(self, spotifyId, accessToken):
+        self.spotifyId = spotifyId
+
+        token = accessToken
+        if "=" in token:
+            _, token = token.split("=", 1)
+
+        self.sp = spotipy.Spotify(auth=token)
+        self.sp.trace=False
+
+    def resolve(self):
+        return self.sp.audio_features(self.spotifyId)[0]
