@@ -1,0 +1,10 @@
+.Header-logo {
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 7px 7px;
+  padding: 5px 5px;
+  border-radius: 20px;
+  border: 1px solid #a3a8af;
+}

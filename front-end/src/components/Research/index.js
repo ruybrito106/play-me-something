@@ -1,6 +1,22 @@
 import React from 'react'
-import { Button } from 'semantic-ui-react'
+import axios from 'axios'
 
-const Research = () => <Button>teste</Button>
+export default class Research extends React.Component{
+    state = {
+        data: null
+    }
 
-export default Research
+    componentDidMount() {
+        axios.get(`http://localhost:5000/survey/accessToken=${this.props.token}`)
+            .then(data => this.setState({data}))
+            .catch(err => console.log(err))
+    }
+
+    render(){
+        console.log(this.state.data)
+        return (
+            <div/>
+        )
+    }
+}
+
