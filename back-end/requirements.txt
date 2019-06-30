@@ -1,0 +1,7 @@
+pandas==0.22.0
+Flask==1.0.3
+flask_cors==3.0.8
+flask_restful==0.3.7
+ibm_watson==3.0.4
+spotipy==2.4.4
+numpy==1.9.0
