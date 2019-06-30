@@ -15,7 +15,7 @@ yarn
 
 ## Running code
 
-Just hit `yarn start` and see your browser open `localhost:3000`.
+Just hit `yarn start` and watch your browser open at `localhost:3000`.
 
 
 
