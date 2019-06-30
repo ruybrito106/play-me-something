@@ -1,4 +1,3 @@
-import pandas as pd
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 from genres import Genres
@@ -63,27 +62,6 @@ class SongResolver:
         return {
             "track": track_id,
         }
-
-    def set_data(self):
-        genres = Genres.IDS
-
-        args = {
-            'min_instrumentalness': 0.5,
-            'limit': 100,
-        }
-
-        songs = {}
-        while len(songs) < 1000:
-            random.shuffle(genres)
-            args['seed_genres'] = genres[:5]
-            results = self.sp.recommendations(**args)
-
-            for result in results['tracks']:
-                songs[result['id']] = ''
-            
-            time.sleep(1)
-        
-        pd.DataFrame({'ID': songs.keys()}).to_csv('data/songs.csv')
 
 class SongFeaturesResolver:
     def __init__(self, spotifyId, accessToken):

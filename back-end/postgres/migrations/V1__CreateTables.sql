@@ -9,7 +9,7 @@ CREATE TABLE survey_result (
     analytical DOUBLE PRECISION,
     confident DOUBLE PRECISION,
     tentative DOUBLE PRECISION,
-    daceability DOUBLE PRECISION, -- [0.0; 1.0]
+    danceability DOUBLE PRECISION, -- [0.0; 1.0]
     acousticness DOUBLE PRECISION, -- [0.0; 1.0] 
     valence DOUBLE PRECISION, -- [0.0; 1.0]
     tempo DOUBLE PRECISION, -- > 0

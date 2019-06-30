@@ -14,7 +14,7 @@ class SurveyResult(db.Model):
     analytical = Column(Float)
     confident = Column(Float)
     tentative = Column(Float)
-    daceability = Column(Float)
+    danceability = Column(Float)
     acousticness = Column(Float) 
     valence = Column(Float)
     tempo = Column(Float)
@@ -38,7 +38,7 @@ def FromWatsonAndSpotify(text_id, emotionsSet, spotifySongId, songFeatures):
         analytical = emotions.get('analytical'),
         confident = emotions.get('confident'),
         tentative = emotions.get('tentative'),
-        daceability = songFeatures.get('daceability'),
+        danceability = songFeatures.get('danceability'),
         acousticness = songFeatures.get('acousticness'),
         valence = songFeatures.get('valence'),
         tempo = songFeatures.get('tempo'),
