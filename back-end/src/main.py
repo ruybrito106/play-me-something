@@ -61,15 +61,15 @@ class Survey(Resource):
         )
         self.db = db
         self.texts_cache = FromCsvFilePath(TEXTS_CACHE_FILE_PATH)
-        self.songs_cache = FromCsvFilePath(SONGS_CACHE_FILE_PATH)
+        self.songs_cache = FromCsvFilePath(SONGS_CACHE_FILE_PATH, idColumn='spotify_song_id')
     
-    def get(self, accessToken):
+    def get(self):
         random_text = self.texts_cache.get_sample_values()[0]
         random_songs = self.songs_cache.get_sample_values(5)
-        random_song_ids = [song['id'] for song in random_songs]
+        random_song_ids = [song['spotify_song_id'] for song in random_songs]
         return {'text_id': random_text['id'], 'text': random_text['text'], 'spotify_song_ids': random_song_ids}, 200
 
-    def post(self, accessToken):
+    def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument("text_id")
         parser.add_argument("spotify_song_id")
@@ -79,8 +79,7 @@ class Survey(Resource):
         response = self.tone_analyzer.tone(tone_input=text)
         emotion_set = EmotionSet(response.get_result())
 
-        song_features_resolver = SongFeaturesResolver(args["spotify_song_id"], accessToken)
-        song_features = song_features_resolver.resolve()
+        song_features = self.songs_cache.get_by_id(args['spotify_song_id'])
 
         survey_result = FromWatsonAndSpotify(args['text_id'], emotion_set, args['spotify_song_id'], song_features)
 
@@ -93,5 +92,5 @@ class Survey(Resource):
 
 
 api.add_resource(Emotions, "/analyze/<string:accessToken>")
-api.add_resource(Survey, "/survey/<string:accessToken>")
+api.add_resource(Survey, "/survey")
 app.run(debug=True)
