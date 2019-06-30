@@ -12,11 +12,7 @@ import "./Router.css";
 
 const authEndpoint = "https://accounts.spotify.com/authorize";
 const clientId = "15dd89009cfa4dcb9f0fdbb330518807";
-const redirectUri = "http://localhost:3000/";
 const scopes = ["user-read-currently-playing", "user-read-playback-state"];
-const loginURL = `${authEndpoint}/?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join(
-  "%20"
-)}&response_type=token&show_dialog=true`;
 
 const hash = window.location.hash
   .substring(1)
@@ -37,6 +33,10 @@ export default class AppRouter extends React.Component {
         () => (window.location.hash = "")
       );
     } else {
+      const redirectUri = window.location.href;
+      const loginURL = `${authEndpoint}/?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join(
+        "%20"
+      )}&response_type=token&show_dialog=true`;
       window.location = loginURL;
     }
   }
