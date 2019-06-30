@@ -28,9 +28,8 @@ const hash = window.location.hash
 export default class AppRouter extends React.Component {
   componentDidMount() {
     if (hash.access_token) {
-      this.setState(
-        { token: hash.access_token },
-        () => (window.location.hash = "")
+      this.setState({ token: hash.access_token }, () =>
+        window.history.replaceState(null, null, " ")
       );
     } else {
       const redirectUri = window.location.href;

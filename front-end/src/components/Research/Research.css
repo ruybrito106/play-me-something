@@ -1,0 +1,60 @@
+.Research-root {
+  display: flex;
+  position: fixed;
+  top: 40px;
+  justify-content: center;
+  margin-top: 40px;
+  width: 100%;
+}
+
+.Research-panel {
+  padding: 32px 16px 32px 16px;
+  background-color: white;
+  border-radius: 8px;
+  padding-top: 16px;
+  border: 1px solid #d5d5d5;
+  width: 400px;
+  height: 520px;
+  margin-left: 16px;
+  margin-right: 16px;
+}
+
+.Research-title {
+  margin: 32px 64px 32px 64px !important;
+}
+
+.Research-music {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.Research-radio {
+  margin-left: 16px;
+}
+
+.Research-panel2 {
+  display: flex;
+  padding-bottom: 16px !important;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.Research-text {
+  height: 350px;
+  overflow: auto;
+}
+
+.Research-box {
+  display: flex;
+}
+
+.Research-btn {
+  margin-left: 16px !important;
+  margin-top: 0px !important;
+}
+
+.Research-btns {
+  display: flex;
+  justify-content: end;
+}
