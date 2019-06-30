@@ -18,9 +18,6 @@ TEXTS_CACHE_FILE_PATH = os.path.join(DATA_DIR, "texts.csv")
 POSTGRES_URI = os.environ.get('POSTGRES_URI')
 WATSON_IAM_APIKEY = os.environ.get('WATSON_IAM_APIKEY')
 
-print(POSTGRES_URI)
-print(WATSON_IAM_APIKEY)
-
 app = Flask(__name__)
 CORS(app)
 
@@ -65,6 +62,12 @@ class Survey(Resource):
         self.db = db
         self.texts_cache = FromCsvFilePath(TEXTS_CACHE_FILE_PATH)
         self.songs_cache = FromCsvFilePath(SONGS_CACHE_FILE_PATH)
+    
+    def get(self, accessToken):
+        random_text = self.texts_cache.get_sample_values()[0]
+        random_songs = self.songs_cache.get_sample_values(5)
+        random_song_ids = [song['id'] for song in random_songs]
+        return {'text_id': random_text['id'], 'text': random_text['text'], 'spotify_song_ids': random_song_ids}, 200
 
     def post(self, accessToken):
         parser = reqparse.RequestParser()
@@ -73,7 +76,6 @@ class Survey(Resource):
         args = parser.parse_args()
 
         text = self.texts_cache.get_by_id(args["text_id"])['text']
-        print(text)
         response = self.tone_analyzer.tone(tone_input=text)
         emotion_set = EmotionSet(response.get_result())
 
@@ -85,7 +87,7 @@ class Survey(Resource):
         self.db.session.add(survey_result)
         self.db.session.commit()
 
-        return None, 200
+        return '', 200
 
         
 

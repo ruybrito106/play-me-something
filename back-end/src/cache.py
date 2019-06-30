@@ -1,4 +1,5 @@
 import csv
+import random
 
 class Cache:
     def __init__(self, data):
@@ -6,6 +7,9 @@ class Cache:
     
     def get_by_id(self, id):
         return self.data[id]
+
+    def get_sample_values(self, n=1):
+        return random.sample(list(self.data.values()), n)
 
 def FromCsvFilePath(filePath):
     with open(filePath) as file:
