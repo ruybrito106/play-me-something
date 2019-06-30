@@ -20,7 +20,7 @@ class Panel extends Component {
       this.setState({ requestState: requestState.LOADING });
 
       axios
-        .post(`http://localhost:5000/analyze/accessToken=${this.props.token}`, {
+        .post(`http://localhost:5000/analyze`, {
           text: this.state.text
         })
         .then(data =>
