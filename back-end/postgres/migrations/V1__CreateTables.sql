@@ -1,6 +1,6 @@
 CREATE TABLE survey_result (
     id BIGSERIAL PRIMARY KEY,
-    text TEXT,
+    text_id TEXT,
     spotify_id TEXT,
     anger DOUBLE PRECISION,
     fear DOUBLE PRECISION,

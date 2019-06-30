@@ -9,13 +9,24 @@ from flask_sqlalchemy import SQLAlchemy
 from emotions import EmotionSet
 from song import SongResolver, SongFeaturesResolver
 from survey_result import db, SurveyResult, FromWatsonAndSpotify
+from cache import FromCsvFilePath
+
+DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
+SONGS_CACHE_FILE_PATH = os.path.join(DATA_DIR, "songs.csv")
+TEXTS_CACHE_FILE_PATH = os.path.join(DATA_DIR, "texts.csv")
+
+POSTGRES_URI = os.environ.get('POSTGRES_URI')
+WATSON_IAM_APIKEY = os.environ.get('WATSON_IAM_APIKEY')
+
+print(POSTGRES_URI)
+print(WATSON_IAM_APIKEY)
 
 app = Flask(__name__)
 CORS(app)
 
 api = Api(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('POSTGRES_URI')
+app.config['SQLALCHEMY_DATABASE_URI'] = POSTGRES_URI
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
@@ -23,7 +34,7 @@ class Emotions(Resource):
     def __init__(self):
         self.tone_analyzer = ToneAnalyzerV3(
             version='2017-09-21',
-            iam_apikey='X1D_Di5vyhWuafHHF-QnCaRgT0pLUP4PQaCNgy1PiE6m',
+            iam_apikey=WATSON_IAM_APIKEY,
             url='https://gateway.watsonplatform.net/tone-analyzer/api'
         )
 
@@ -48,24 +59,28 @@ class Survey(Resource):
     def __init__(self):
         self.tone_analyzer = ToneAnalyzerV3(
             version='2017-09-21',
-            iam_apikey='X1D_Di5vyhWuafHHF-QnCaRgT0pLUP4PQaCNgy1PiE6m',
+            iam_apikey=WATSON_IAM_APIKEY,
             url='https://gateway.watsonplatform.net/tone-analyzer/api'
         )
         self.db = db
+        self.texts_cache = FromCsvFilePath(TEXTS_CACHE_FILE_PATH)
+        self.songs_cache = FromCsvFilePath(SONGS_CACHE_FILE_PATH)
 
     def post(self, accessToken):
         parser = reqparse.RequestParser()
-        parser.add_argument("text")
+        parser.add_argument("text_id")
         parser.add_argument("spotify_song_id")
         args = parser.parse_args()
 
-        response = self.tone_analyzer.tone(tone_input=args["text"])
+        text = self.texts_cache.get_by_id(args["text_id"])['text']
+        print(text)
+        response = self.tone_analyzer.tone(tone_input=text)
         emotion_set = EmotionSet(response.get_result())
 
         song_features_resolver = SongFeaturesResolver(args["spotify_song_id"], accessToken)
         song_features = song_features_resolver.resolve()
 
-        survey_result = FromWatsonAndSpotify(args['text'], emotion_set, args['spotify_song_id'], song_features)
+        survey_result = FromWatsonAndSpotify(args['text_id'], emotion_set, args['spotify_song_id'], song_features)
 
         self.db.session.add(survey_result)
         self.db.session.commit()

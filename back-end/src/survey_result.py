@@ -5,7 +5,7 @@ db = SQLAlchemy()
 class SurveyResult(db.Model):
     __tablename__ = 'survey_result'
     id = Column(Integer, primary_key=True)
-    text = Column(Text)
+    text_id = Column(Text)
     spotify_id = Column(Text)
     anger = Column(Float)
     fear = Column(Float)
@@ -29,7 +29,7 @@ def FromWatsonAndSpotify(text_id, emotionsSet, spotifySongId, songFeatures):
     for emotion in emotionsSet.emotions:
         emotions[emotion['name']] = emotion['score']
     return SurveyResult(
-        text = text_id,
+        text_id = text_id,
         spotify_id = spotifySongId,
         anger = emotions.get('anger'),
         fear = emotions.get('fear'),
