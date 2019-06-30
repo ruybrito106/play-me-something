@@ -1,8 +1,12 @@
+import pandas as pd
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
+from genres import Genres
+import random
+import time
 
 class SongResolver:
-    def __init__(self, emotions, accessToken):
+    def __init__(self, accessToken, emotions=None):
         self.emotions = emotions
 
         token = accessToken
@@ -11,7 +15,6 @@ class SongResolver:
 
         self.sp = spotipy.Spotify(auth=token)
         self.sp.trace=False
-
     
     def resolve(self):
         # watson results = (emotional_tons ++ language_tons)
@@ -60,3 +63,25 @@ class SongResolver:
         return {
             "track": track_id,
         }
+
+    def set_data(self):
+        genres = Genres.IDS
+
+        args = {
+            'min_instrumentalness': 0.5,
+            'limit': 100,
+        }
+
+        songs = {}
+        while len(songs) < 1000:
+            random.shuffle(genres)
+            args['seed_genres'] = genres[:5]
+            results = self.sp.recommendations(**args)
+
+            for result in results['tracks']:
+                songs[result['id']] = ''
+            
+            time.sleep(1)
+        
+        pd.DataFrame({'ID': songs.keys()}).to_csv('data/songs.csv')
+

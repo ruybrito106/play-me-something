@@ -30,7 +30,7 @@ class Emotions(Resource):
             response = self.tone_analyzer.tone(tone_input=args["text"])
             
             emotion_set = EmotionSet(response.get_result())
-            resolver = SongResolver(emotion_set, accessToken)
+            resolver = SongResolver(accessToken, emotion_set)
 
             return resolver.resolve(), 200 
         except ApiException as ex:
