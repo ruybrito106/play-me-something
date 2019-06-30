@@ -1,0 +1,17 @@
+.Panel-root {
+    background-color: #e6e8ed;
+    border-radius: 15px;
+    box-shadow: 2px 2px 6px -2px #70747a;
+    width: 800px;
+    height: 500px;
+}
+
+.Panel-player {
+    margin: 0px 15px;
+    border-radius: 30px;
+}
+
+.Panel-placeholder {
+    padding: 15px 20px;
+    height: 54px;
+}

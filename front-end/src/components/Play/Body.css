@@ -1,0 +1,12 @@
+.Body-root {
+    display: flex;
+    position: fixed;
+    top: 50px;
+    justify-content: center;
+    margin-top: 60px;
+    width: 100%;
+}
+
+.Body-placeholder {
+    padding: 15px 20px;
+}
