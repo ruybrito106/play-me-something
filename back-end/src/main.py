@@ -7,9 +7,10 @@ from flask_cors import CORS
 from flask_restful import Api, Resource, reqparse
 from flask_sqlalchemy import SQLAlchemy
 from emotions import EmotionSet
-from song import SongResolver, SongFeaturesResolver
+from song import FindClosestSong
 from survey_result import db, SurveyResult, FromWatsonAndSpotify
 from cache import FromCsvFilePath
+from match import NaiveMatch
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
 SONGS_CACHE_FILE_PATH = os.path.join(DATA_DIR, "songs.csv")
@@ -34,8 +35,9 @@ class Emotions(Resource):
             iam_apikey=WATSON_IAM_APIKEY,
             url='https://gateway.watsonplatform.net/tone-analyzer/api'
         )
+        self.songs_cache = FromCsvFilePath(SONGS_CACHE_FILE_PATH, idColumn='spotify_song_id')
 
-    def post(self, accessToken):
+    def post(self):
         try:
             parser = reqparse.RequestParser()
             parser.add_argument("text")
@@ -43,11 +45,13 @@ class Emotions(Resource):
             print(args)
 
             response = self.tone_analyzer.tone(tone_input=args["text"])
-            
+            print(response)
             emotion_set = EmotionSet(response.get_result())
-            resolver = SongResolver(accessToken, emotion_set)
+            print(emotion_set.emotions)
+            matched_features = NaiveMatch(emotion_set)
+            best_song = FindClosestSong(self.songs_cache.songs_list, matched_features)
 
-            return resolver.resolve(), 200 
+            return {"track": best_song['spotify_song_id']}, 200 
         except ApiException as ex:
             print ("Method failed with status code " + str(ex.code) + ": " + ex.message)
             return "Bad request", 400
@@ -91,6 +95,6 @@ class Survey(Resource):
         
 
 
-api.add_resource(Emotions, "/analyze/<string:accessToken>")
+api.add_resource(Emotions, "/analyze")
 api.add_resource(Survey, "/survey")
 app.run(debug=True)

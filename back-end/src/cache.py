@@ -4,6 +4,7 @@ import random
 class Cache:
     def __init__(self, data):
         self.data = data
+        self.songs_list = [song for (_, song) in data.items()]
     
     def get_by_id(self, id):
         return self.data[id]
