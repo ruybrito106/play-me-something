@@ -2,8 +2,6 @@ import React, { Component } from "react";
 import "./Body.css";
 import Panel from "./Panel.js";
 import formState from "./formState.js";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
 
 class Body extends Component {
   constructor(props) {

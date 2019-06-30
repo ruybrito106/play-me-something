@@ -13,7 +13,7 @@ class Navbar extends React.Component {
 
     return (
       <Menu inverted>
-        <Menu.Item>
+        <Menu.Item className="Menu-img">
           <img src={logo} className="Header-logo" alt="logo" />
         </Menu.Item>
         <Menu.Item
