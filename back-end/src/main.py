@@ -17,7 +17,7 @@ class Emotions(Resource):
     def __init__(self):
         self.tone_analyzer = ToneAnalyzerV3(
             version='2017-09-21',
-            iam_apikey='API_KEY',
+            iam_apikey='X1D_Di5vyhWuafHHF-QnCaRgT0pLUP4PQaCNgy1PiE6m',
             url='https://gateway.watsonplatform.net/tone-analyzer/api'
         )
 
