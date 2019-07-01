@@ -37,14 +37,12 @@ for i in range(0, len(genres)):
             for key in SPOTIFY_FEATURES_TO_SAVE:
                 new_songs[feature['id']][key] = feature.get(key)
         songs.update(new_songs)
-        print(len(songs))
 
 songs = [song for _, song in songs.items()]
 for i in range(0, len(songs)):
     songs[i]['id'] = i
 
 keys = songs[0].keys()
-print(keys)
 with open(SONGS_CACHE_FILE_PATH, "w") as file:
     dict_writter = csv.DictWriter(file, keys)
     dict_writter.writeheader()

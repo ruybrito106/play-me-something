@@ -42,12 +42,9 @@ class Emotions(Resource):
             parser = reqparse.RequestParser()
             parser.add_argument("text")
             args = parser.parse_args()
-            print(args)
 
             response = self.tone_analyzer.tone(tone_input=args["text"])
-            print(response)
             emotion_set = EmotionSet(response.get_result())
-            print(emotion_set.emotions)
             matched_features = NaiveMatch(emotion_set)
             best_song = FindClosestSong(self.songs_cache.songs_list, matched_features)
 
@@ -91,9 +88,6 @@ class Survey(Resource):
         self.db.session.commit()
 
         return '', 200
-
-        
-
 
 api.add_resource(Emotions, "/analyze")
 api.add_resource(Survey, "/survey")

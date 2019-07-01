@@ -25,10 +25,6 @@ class SurveyResult(db.Model):
     key = Column(Float)
     
 def FromWatsonAndSpotify(text_id, emotionsSet, spotifySongId, songFeatures):
-    print(text_id)
-    print(emotionsSet.emotions)
-    print(spotifySongId)
-    print(songFeatures)
     emotions = {}
     for emotion in emotionsSet.emotions:
         emotions[emotion['name']] = emotion['score']
