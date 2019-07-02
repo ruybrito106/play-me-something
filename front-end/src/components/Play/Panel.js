@@ -20,7 +20,7 @@ class Panel extends Component {
       this.setState({ requestState: requestState.LOADING });
 
       axios
-        .post(`http://localhost:5000/analyze`, {
+        .post(`https://play-me-something.herokuapp.com/analyze`, {
           text: this.state.text
         })
         .then(data =>

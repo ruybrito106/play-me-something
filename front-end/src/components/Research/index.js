@@ -84,7 +84,7 @@ export default class Research extends React.Component {
       data: { text_id }
     } = this.state;
     axios
-      .post(`http://localhost:5000/survey`, {
+      .post(`https://play-me-something.herokuapp.com/survey`, {
         text_id,
         spotify_song_id: selected
       })
@@ -95,7 +95,7 @@ export default class Research extends React.Component {
   handleNext = () => {
     this.setState({ data: null, selected: null }, () =>
       axios
-        .get(`http://localhost:5000/survey`)
+        .get(`https://play-me-something.herokuapp.com/survey`)
         .then(({ data }) => this.setState({ data }))
         .catch(err => console.log(err))
     );
