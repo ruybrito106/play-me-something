@@ -16,7 +16,7 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
 SONGS_CACHE_FILE_PATH = os.path.join(DATA_DIR, "songs.csv")
 TEXTS_CACHE_FILE_PATH = os.path.join(DATA_DIR, "texts.csv")
 
-POSTGRES_URI = os.environ.get('POSTGRES_URI')
+POSTGRES_URI = os.environ.get('DATABASE_URL')
 WATSON_IAM_APIKEY = os.environ.get('WATSON_IAM_APIKEY')
 
 app = Flask(__name__)
@@ -91,4 +91,5 @@ class Survey(Resource):
 
 api.add_resource(Emotions, "/analyze")
 api.add_resource(Survey, "/survey")
-app.run(debug=True)
+if __name__ == '__main__':
+    app.run(debug=True)
