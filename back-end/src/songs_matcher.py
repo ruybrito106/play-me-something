@@ -9,14 +9,14 @@ from sklearn.preprocessing import MinMaxScaler
 class SongsMatcher:
     ALL_COLS = ['danceability', 'acousticness', 'valence', 'tempo', 'energy', 'time_signature', 'mode', 'loudness', 'key']
     COLS = ['danceability', 'acousticness', 'valence', 'tempo', 'energy', 'time_signature', 'loudness']
-    EMOTIONS = ['anger', 'fear', 'joy', 'analytical', 'confident', 'tentative']
+    EMOTIONS = ['anger', 'fear', 'sadness', 'joy', 'analytical', 'confident', 'tentative']
 
     def __init__(self, path):
         self.data = pd.read_csv(path, sep=',')
         self.scaler = MinMaxScaler()
         
         self.data[self.ALL_COLS] = self.scaler.fit_transform(self.data[self.ALL_COLS])
-        self.clf = load('../model/extra_trees.joblib')
+        self.clf = load('../model/random_forest.joblib')
 
     @staticmethod
     def distance(row, attrs):

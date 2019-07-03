@@ -61,7 +61,7 @@ def dump_pg_to_csv(path='../data/survey_result.csv'):
         path, 
         sep='\t', 
         header=True,
-        columns=['anger', 'fear', 'joy', 'analytical', 'confident', 'tentative', 'danceability', 'acousticness', 'valence', 'tempo', 'energy', 'time_signature', 'mode', 'loudness', 'key']
+        columns=['anger', 'fear', 'sadness', 'joy', 'analytical', 'confident', 'tentative', 'danceability', 'acousticness', 'valence', 'tempo', 'energy', 'time_signature', 'mode', 'loudness', 'key']
     )
 
 def scale_data(pred, label):
@@ -185,7 +185,7 @@ def decision_tree(X_train, y_train, X_test, y_test):
 def train_model():
     data = pd.read_csv('../data/survey_result.csv', sep='\t', index_col=0)
 
-    X, y = data.iloc[:, :-9], data.iloc[:, 6:]
+    X, y = data.iloc[:, :-9], data.iloc[:, 7:]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=200)
 
     linear_regression(X_train, y_train, X_test, y_test) 
@@ -194,15 +194,5 @@ def train_model():
     extra_trees(X_train, y_train, X_test, y_test)
     decision_tree(X_train, y_train, X_test, y_test)
 
-    # danceability => ET
-    # accousticness => ET
-    # valence => ET
-    # tempo => ET
-    # energy => ET
-    # time_signature => ET
-    # mode => RF
-    # loudness => ET
-    # key => RF
-
-dump_pg_to_csv()
-# train_model()
+# dump_pg_to_csv()
+train_model()
