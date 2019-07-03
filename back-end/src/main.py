@@ -7,10 +7,9 @@ from flask_cors import CORS
 from flask_restful import Api, Resource, reqparse
 from flask_sqlalchemy import SQLAlchemy
 from emotions import EmotionSet
-from song import FindClosestSong
 from survey_result import db, SurveyResult, FromWatsonAndSpotify
 from cache import FromCsvFilePath
-from match import NaiveMatch
+from songs_matcher import SongsMatcher
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
 SONGS_CACHE_FILE_PATH = os.path.join(DATA_DIR, "songs.csv")
@@ -36,6 +35,7 @@ class Emotions(Resource):
             url='https://gateway.watsonplatform.net/tone-analyzer/api'
         )
         self.songs_cache = FromCsvFilePath(SONGS_CACHE_FILE_PATH, idColumn='spotify_song_id')
+        self.matcher = SongsMatcher(SONGS_CACHE_FILE_PATH)
 
     def post(self):
         try:
@@ -45,10 +45,9 @@ class Emotions(Resource):
 
             response = self.tone_analyzer.tone(tone_input=args["text"])
             emotion_set = EmotionSet(response.get_result())
-            matched_features = NaiveMatch(emotion_set)
-            best_song = FindClosestSong(self.songs_cache.songs_list, matched_features)
+            track = self.matcher.find_closest_to_emotions(emotion_set)
 
-            return {"track": best_song['spotify_song_id']}, 200 
+            return {"track": track}, 200 
         except ApiException as ex:
             print ("Method failed with status code " + str(ex.code) + ": " + ex.message)
             return "Bad request", 400

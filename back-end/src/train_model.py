@@ -1,12 +1,17 @@
 import os
-import pickle
+import math
+
+from joblib import dump, load
 
 import pandas as pd
 import numpy as np
 
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LinearRegression, Lasso
+from sklearn.ensemble import RandomForestRegressor, ExtraTreesRegressor
 from sklearn.metrics import mean_squared_error
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.tree import DecisionTreeRegressor
 
 from sqlalchemy import create_engine
 
@@ -59,22 +64,145 @@ def dump_pg_to_csv(path='../data/survey_result.csv'):
         columns=['anger', 'fear', 'joy', 'analytical', 'confident', 'tentative', 'danceability', 'acousticness', 'valence', 'tempo', 'energy', 'time_signature', 'mode', 'loudness', 'key']
     )
 
+def scale_data(pred, label):
+    scaler = MinMaxScaler()
+    scaler.fit(label)
+    label = scaler.transform(label)
+    
+    scaler.fit(pred)
+    pred = scaler.transform(pred)
+
+    return pred, label
+
+def evaluate_model(pred, label):
+    if len(pred) == 0:
+        raise ValueError("Pred cannot be empty")
+
+    errors = list()
+    
+    sz = len(pred[0])
+    for i in range(sz):
+        xs, ys = [x[i] for x in pred], [y[i] for y in label]
+        errors.append(mean_squared_error(xs, ys))
+    
+    return map(lambda x : round(x, 3), errors)
+
+def metrics(arr):
+    s = sum(arr)
+    l = len(arr)  
+    mean = s / l
+
+    sq_sum = sum([(x - mean) * (x - mean) for x in arr])
+    stdev = math.sqrt(sq_sum / l)
+
+    return (round(mean, 3), round(stdev, 3))
+
+def linear_regression(X_train, y_train, X_test, y_test):
+    errors = []
+    
+    for _ in range(50):
+        clf = LinearRegression()
+        clf.fit(X_train, y_train)
+
+        dump(clf, '../model/linear_regression.joblib')
+
+        pred = clf.predict(X_test)
+        pred, label = scale_data(pd.DataFrame(pred), y_test)
+        
+        err = evaluate_model(pred, label)
+        errors += [err]
+
+    print ([metrics(x) for x in zip(*errors)])
+
+def lasso(X_train, y_train, X_test, y_test):
+    errors = []
+    
+    for _ in range(50):
+        clf = Lasso()
+        clf.fit(X_train, y_train)
+
+        dump(clf, '../model/lasso.joblib')
+
+        pred = clf.predict(X_test)
+        pred, label = scale_data(pd.DataFrame(pred), y_test)
+        
+        err = evaluate_model(pred, label)
+        errors += [err]
+
+    print ([metrics(x) for x in zip(*errors)])
+
+def random_forest(X_train, y_train, X_test, y_test):
+    errors = []
+    
+    for _ in range(50):
+        clf = RandomForestRegressor()
+        clf.fit(X_train, y_train)
+
+        dump(clf, '../model/random_forest.joblib')
+
+        pred = clf.predict(X_test)
+        pred, label = scale_data(pd.DataFrame(pred), y_test)
+        
+        err = evaluate_model(pred, label)
+        errors += [err]
+
+    print ([metrics(x) for x in zip(*errors)])
+
+def extra_trees(X_train, y_train, X_test, y_test):
+    errors = []
+    
+    for _ in range(50):
+        clf = ExtraTreesRegressor()
+        clf.fit(X_train, y_train)
+
+        dump(clf, '../model/extra_trees.joblib')
+
+        pred = clf.predict(X_test)
+        pred, label = scale_data(pd.DataFrame(pred), y_test)
+        
+        err = evaluate_model(pred, label)
+        errors += [err]
+
+    print ([metrics(x) for x in zip(*errors)])
+
+def decision_tree(X_train, y_train, X_test, y_test):
+    errors = []
+    
+    for _ in range(50):
+        clf = DecisionTreeRegressor()
+        clf.fit(X_train, y_train)
+
+        dump(clf, '../model/decision_tree.joblib')
+
+        pred = clf.predict(X_test)
+        pred, label = scale_data(pd.DataFrame(pred), y_test)
+        
+        err = evaluate_model(pred, label)
+        errors += [err]
+
+    print ([metrics(x) for x in zip(*errors)])
+
 def train_model():
     data = pd.read_csv('../data/survey_result.csv', sep='\t', index_col=0)
 
-    X, y = data.iloc[:, :-9], data.iloc[:, 7:]
+    X, y = data.iloc[:, :-9], data.iloc[:, 6:]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=200)
 
-    clf = LinearRegression()
-    clf.fit(X_train, y_train)
+    linear_regression(X_train, y_train, X_test, y_test) 
+    lasso(X_train, y_train, X_test, y_test)
+    random_forest(X_train, y_train, X_test, y_test)
+    extra_trees(X_train, y_train, X_test, y_test)
+    decision_tree(X_train, y_train, X_test, y_test)
 
-    pickle.dump(clf, open('../model/linear_regression.pkl', 'wb'))
-
-    pred = clf.predict(X_test)
-    for i in range(len(y_test)):
-        print ('Sample: ', map(lambda x : round(x, 3), list(y_test.iloc[i, :])))
-        print ('Pred:   ', map(lambda x : round(x, 3), pred[i]))
-        print ()
+    # danceability => ET
+    # accousticness => ET
+    # valence => ET
+    # tempo => ET
+    # energy => ET
+    # time_signature => ET
+    # mode => RF
+    # loudness => ET
+    # key => RF
 
 dump_pg_to_csv()
-train_model()
+# train_model()
