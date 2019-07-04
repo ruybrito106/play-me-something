@@ -93,9 +93,9 @@ def metrics(arr):
     mean = s / l
 
     sq_sum = sum([(x - mean) * (x - mean) for x in arr])
-    stdev = math.sqrt(sq_sum / l)
+    # stdev = math.sqrt(sq_sum / l)
 
-    return (round(mean, 3), round(stdev, 3))
+    return round(mean, 3)
 
 def linear_regression(X_train, y_train, X_test, y_test):
     errors = []
@@ -112,7 +112,7 @@ def linear_regression(X_train, y_train, X_test, y_test):
         err = evaluate_model(pred, label)
         errors += [err]
 
-    print ([metrics(x) for x in zip(*errors)])
+    return [metrics(x) for x in zip(*errors)]
 
 def lasso(X_train, y_train, X_test, y_test):
     errors = []
@@ -129,7 +129,7 @@ def lasso(X_train, y_train, X_test, y_test):
         err = evaluate_model(pred, label)
         errors += [err]
 
-    print ([metrics(x) for x in zip(*errors)])
+    return [metrics(x) for x in zip(*errors)]
 
 def random_forest(X_train, y_train, X_test, y_test):
     errors = []
@@ -146,7 +146,7 @@ def random_forest(X_train, y_train, X_test, y_test):
         err = evaluate_model(pred, label)
         errors += [err]
 
-    print ([metrics(x) for x in zip(*errors)])
+    return [metrics(x) for x in zip(*errors)]
 
 def extra_trees(X_train, y_train, X_test, y_test):
     errors = []
@@ -163,7 +163,7 @@ def extra_trees(X_train, y_train, X_test, y_test):
         err = evaluate_model(pred, label)
         errors += [err]
 
-    print ([metrics(x) for x in zip(*errors)])
+    return [metrics(x) for x in zip(*errors)]
 
 def decision_tree(X_train, y_train, X_test, y_test):
     errors = []
@@ -180,7 +180,7 @@ def decision_tree(X_train, y_train, X_test, y_test):
         err = evaluate_model(pred, label)
         errors += [err]
 
-    print ([metrics(x) for x in zip(*errors)])
+    return [metrics(x) for x in zip(*errors)]
 
 def train_model():
     data = pd.read_csv('../data/survey_result.csv', sep='\t', index_col=0)
@@ -188,11 +188,16 @@ def train_model():
     X, y = data.iloc[:, :-9], data.iloc[:, 7:]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=200)
 
-    linear_regression(X_train, y_train, X_test, y_test) 
-    lasso(X_train, y_train, X_test, y_test)
-    random_forest(X_train, y_train, X_test, y_test)
-    extra_trees(X_train, y_train, X_test, y_test)
-    decision_tree(X_train, y_train, X_test, y_test)
+    content = {
+        'LINEAR_REGRESSION': linear_regression(X_train, y_train, X_test, y_test),
+        'LASSO': lasso(X_train, y_train, X_test, y_test),
+        'RANDOM_FOREST': random_forest(X_train, y_train, X_test, y_test),
+        'EXTRA_TREES': extra_trees(X_train, y_train, X_test, y_test),
+        'DECISION_TREE': decision_tree(X_train, y_train, X_test, y_test),
+    }
 
-# dump_pg_to_csv()
-train_model()
+    df = pd.DataFrame.from_dict(content, orient='index', columns=['danceability', 'acousticness', 'valence', 'tempo', 'energy', 'time_signature', 'mode', 'loudness', 'key'])
+    df.transpose().to_csv('../data/model_results.csv')
+
+dump_pg_to_csv()
+# train_model()

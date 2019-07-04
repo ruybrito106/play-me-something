@@ -16,7 +16,7 @@ class SongsMatcher:
         self.scaler = MinMaxScaler()
         
         self.data[self.ALL_COLS] = self.scaler.fit_transform(self.data[self.ALL_COLS])
-        self.clf = load('../model/random_forest.joblib')
+        self.clf = load('../model/linear_regression.joblib')
 
     @staticmethod
     def distance(row, attrs):
